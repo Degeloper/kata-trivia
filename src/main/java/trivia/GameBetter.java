@@ -1,7 +1,5 @@
 package trivia;
 
-import java.util.LinkedList;
-
 public class GameBetter implements IGame {
 
    private final Printer printer;
@@ -10,26 +8,15 @@ public class GameBetter implements IGame {
    private final int[] purses = new int[6];
    private final boolean[] inPenaltyBox = new boolean[6];
 
-   private final LinkedList<String> popQuestions = new LinkedList<>();
-   private final LinkedList<String> scienceQuestions = new LinkedList<>();
-   private final LinkedList<String> sportsQuestions = new LinkedList<>();
-   private final LinkedList<String> rockQuestions = new LinkedList<>();
    private final Players players = new Players();
+   private final Questions questions;
 
    private boolean isGettingOutOfPenaltyBox;
 
    public GameBetter(final Printer printer) {
       this.printer = printer;
-      for (int i = 0; i < 50; i++) {
-         popQuestions.addLast("Pop Question " + i);
-         scienceQuestions.addLast(("Science Question " + i));
-         sportsQuestions.addLast(("Sports Question " + i));
-         rockQuestions.addLast(createRockQuestion(i));
-      }
-   }
-
-   private String createRockQuestion(final int index) {
-      return "Rock Question " + index;
+      questions = new Questions(printer);
+      questions.init();
    }
 
    public boolean isPlayable() {
@@ -48,10 +35,6 @@ public class GameBetter implements IGame {
       return true;
    }
 
-   private int howManyPlayers() {
-      return players.size();
-   }
-
    @Override
    public void roll(final int roll) {
       printer.print(players.currentPlayer() + " is the current player");
@@ -61,55 +44,31 @@ public class GameBetter implements IGame {
          isGettingOutOfPenaltyBox = true;
 
          printer.print(players.currentPlayer() + " is getting out of the penalty box");
-         places[players.currentPlayerId()] = places[players.currentPlayerId()] + roll;
-         if (places[players.currentPlayerId()] > 11)
-            places[players.currentPlayerId()] = places[players.currentPlayerId()] - 12;
+         places[players.currentPlayerId()] = placeOfCurrentPlayer() + roll;
+         if (placeOfCurrentPlayer() > 11)
+            places[players.currentPlayerId()] = placeOfCurrentPlayer() - 12;
 
          printer.print(players.currentPlayer()
                  + "'s new location is "
-                 + places[players.currentPlayerId()]);
-         printer.print("The category is " + currentCategory());
+                 + placeOfCurrentPlayer());
+         printer.print("The category is " + questions.categoryByPlace(placeOfCurrentPlayer()));
          askQuestion();
       } else {
-         printer.print(players.currentPlayer() + " is not getting out of the penalty box");
          isGettingOutOfPenaltyBox = false;
+         printer.print(players.currentPlayer() + " is not getting out of the penalty box");
       }
       else {
-         places[players.currentPlayerId()] = places[players.currentPlayerId()] + roll;
-         if (places[players.currentPlayerId()] > 11)
-            places[players.currentPlayerId()] = places[players.currentPlayerId()] - 12;
+         places[players.currentPlayerId()] = placeOfCurrentPlayer() + roll;
+         if (placeOfCurrentPlayer() > 11)
+            places[players.currentPlayerId()] = placeOfCurrentPlayer() - 12;
 
          printer.print(players.currentPlayer()
                  + "'s new location is "
-                 + places[players.currentPlayerId()]);
-         printer.print("The category is " + currentCategory());
+                 + placeOfCurrentPlayer());
+         printer.print("The category is " + questions.categoryByPlace(placeOfCurrentPlayer()));
          askQuestion();
       }
 
-   }
-
-   private void askQuestion() {
-      if (currentCategory().equals("Pop"))
-         printer.print(popQuestions.removeFirst());
-      if (currentCategory().equals("Science"))
-         printer.print(scienceQuestions.removeFirst());
-      if (currentCategory().equals("Sports"))
-         printer.print(sportsQuestions.removeFirst());
-      if (currentCategory().equals("Rock"))
-         printer.print(rockQuestions.removeFirst());
-   }
-
-   private String currentCategory() {
-      if (places[players.currentPlayerId()] == 0) return "Pop";
-      if (places[players.currentPlayerId()] == 4) return "Pop";
-      if (places[players.currentPlayerId()] == 8) return "Pop";
-      if (places[players.currentPlayerId()] == 1) return "Science";
-      if (places[players.currentPlayerId()] == 5) return "Science";
-      if (places[players.currentPlayerId()] == 9) return "Science";
-      if (places[players.currentPlayerId()] == 2) return "Sports";
-      if (places[players.currentPlayerId()] == 6) return "Sports";
-      if (places[players.currentPlayerId()] == 10) return "Sports";
-      return "Rock";
    }
 
    @Override
@@ -119,7 +78,7 @@ public class GameBetter implements IGame {
          purses[players.currentPlayerId()]++;
          printer.print(players.currentPlayer()
                  + " now has "
-                 + purses[players.currentPlayerId()]
+                 + purseOfCurrentPlayer()
                  + " Gold Coins.");
 
          final boolean winner = didPlayerWin();
@@ -134,7 +93,7 @@ public class GameBetter implements IGame {
          purses[players.currentPlayerId()]++;
          printer.print(players.currentPlayer()
                  + " now has "
-                 + purses[players.currentPlayerId()]
+                 + purseOfCurrentPlayer()
                  + " Gold Coins.");
 
          final boolean winner = didPlayerWin();
@@ -153,7 +112,23 @@ public class GameBetter implements IGame {
       return true;
    }
 
+   private int howManyPlayers() {
+      return players.size();
+   }
+
+   private void askQuestion() {
+      questions.askQuestion(placeOfCurrentPlayer());
+   }
+
+   private int placeOfCurrentPlayer() {
+      return places[players.currentPlayerId()];
+   }
+
+   private int purseOfCurrentPlayer() {
+      return purses[players.currentPlayerId()];
+   }
+
    private boolean didPlayerWin() {
-      return !(purses[players.currentPlayerId()] == 6);
+      return !(purseOfCurrentPlayer() == 6);
    }
 }
