@@ -1,14 +1,11 @@
 package trivia;
 
-import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
 
 public class GameBetter implements IGame {
 
    private final Printer printer;
 
-   private final List<String> players = new ArrayList<>();
    private final int[] places = new int[6];
    private final int[] purses = new int[6];
    private final boolean[] inPenaltyBox = new boolean[6];
@@ -17,8 +14,8 @@ public class GameBetter implements IGame {
    private final LinkedList<String> scienceQuestions = new LinkedList<>();
    private final LinkedList<String> sportsQuestions = new LinkedList<>();
    private final LinkedList<String> rockQuestions = new LinkedList<>();
+   private final Players players = new Players();
 
-   private int currentPlayer = 0;
    private boolean isGettingOutOfPenaltyBox;
 
    public GameBetter(final Printer printer) {
@@ -57,33 +54,34 @@ public class GameBetter implements IGame {
 
    @Override
    public void roll(final int roll) {
-      printer.print(players.get(currentPlayer) + " is the current player");
+      printer.print(players.currentPlayer() + " is the current player");
       printer.print("They have rolled a " + roll);
 
-      if (inPenaltyBox[currentPlayer]) if (roll % 2 != 0) {
+      if (inPenaltyBox[players.currentPlayerId()]) if (roll % 2 != 0) {
          isGettingOutOfPenaltyBox = true;
 
-         printer.print(players.get(currentPlayer) + " is getting out of the penalty box");
-         places[currentPlayer] = places[currentPlayer] + roll;
-         if (places[currentPlayer] > 11)
-            places[currentPlayer] = places[currentPlayer] - 12;
+         printer.print(players.currentPlayer() + " is getting out of the penalty box");
+         places[players.currentPlayerId()] = places[players.currentPlayerId()] + roll;
+         if (places[players.currentPlayerId()] > 11)
+            places[players.currentPlayerId()] = places[players.currentPlayerId()] - 12;
 
-         printer.print(players.get(currentPlayer)
+         printer.print(players.currentPlayer()
                  + "'s new location is "
-                 + places[currentPlayer]);
+                 + places[players.currentPlayerId()]);
          printer.print("The category is " + currentCategory());
          askQuestion();
       } else {
-         printer.print(players.get(currentPlayer) + " is not getting out of the penalty box");
+         printer.print(players.currentPlayer() + " is not getting out of the penalty box");
          isGettingOutOfPenaltyBox = false;
       }
       else {
-         places[currentPlayer] = places[currentPlayer] + roll;
-         if (places[currentPlayer] > 11) places[currentPlayer] = places[currentPlayer] - 12;
+         places[players.currentPlayerId()] = places[players.currentPlayerId()] + roll;
+         if (places[players.currentPlayerId()] > 11)
+            places[players.currentPlayerId()] = places[players.currentPlayerId()] - 12;
 
-         printer.print(players.get(currentPlayer)
+         printer.print(players.currentPlayer()
                  + "'s new location is "
-                 + places[currentPlayer]);
+                 + places[players.currentPlayerId()]);
          printer.print("The category is " + currentCategory());
          askQuestion();
       }
@@ -102,49 +100,45 @@ public class GameBetter implements IGame {
    }
 
    private String currentCategory() {
-      if (places[currentPlayer] == 0) return "Pop";
-      if (places[currentPlayer] == 4) return "Pop";
-      if (places[currentPlayer] == 8) return "Pop";
-      if (places[currentPlayer] == 1) return "Science";
-      if (places[currentPlayer] == 5) return "Science";
-      if (places[currentPlayer] == 9) return "Science";
-      if (places[currentPlayer] == 2) return "Sports";
-      if (places[currentPlayer] == 6) return "Sports";
-      if (places[currentPlayer] == 10) return "Sports";
+      if (places[players.currentPlayerId()] == 0) return "Pop";
+      if (places[players.currentPlayerId()] == 4) return "Pop";
+      if (places[players.currentPlayerId()] == 8) return "Pop";
+      if (places[players.currentPlayerId()] == 1) return "Science";
+      if (places[players.currentPlayerId()] == 5) return "Science";
+      if (places[players.currentPlayerId()] == 9) return "Science";
+      if (places[players.currentPlayerId()] == 2) return "Sports";
+      if (places[players.currentPlayerId()] == 6) return "Sports";
+      if (places[players.currentPlayerId()] == 10) return "Sports";
       return "Rock";
    }
 
    @Override
    public boolean wasCorrectlyAnswered() {
-      if (inPenaltyBox[currentPlayer]) if (isGettingOutOfPenaltyBox) {
+      if (inPenaltyBox[players.currentPlayerId()]) if (isGettingOutOfPenaltyBox) {
          printer.print("Answer was correct!!!!");
-         purses[currentPlayer]++;
-         printer.print(players.get(currentPlayer)
+         purses[players.currentPlayerId()]++;
+         printer.print(players.currentPlayer()
                  + " now has "
-                 + purses[currentPlayer]
+                 + purses[players.currentPlayerId()]
                  + " Gold Coins.");
 
          final boolean winner = didPlayerWin();
-         currentPlayer++;
-         if (currentPlayer == players.size()) currentPlayer = 0;
-
+         players.changePlayer();
          return winner;
       } else {
-         currentPlayer++;
-         if (currentPlayer == players.size()) currentPlayer = 0;
+         players.changePlayer();
          return true;
       }
       else {
          printer.print("Answer was correct!!!!");
-         purses[currentPlayer]++;
-         printer.print(players.get(currentPlayer)
+         purses[players.currentPlayerId()]++;
+         printer.print(players.currentPlayer()
                  + " now has "
-                 + purses[currentPlayer]
+                 + purses[players.currentPlayerId()]
                  + " Gold Coins.");
 
          final boolean winner = didPlayerWin();
-         currentPlayer++;
-         if (currentPlayer == players.size()) currentPlayer = 0;
+         players.changePlayer();
 
          return winner;
       }
@@ -153,15 +147,13 @@ public class GameBetter implements IGame {
    @Override
    public boolean wrongAnswer() {
       printer.print("Question was incorrectly answered");
-      printer.print(players.get(currentPlayer) + " was sent to the penalty box");
-      inPenaltyBox[currentPlayer] = true;
-
-      currentPlayer++;
-      if (currentPlayer == players.size()) currentPlayer = 0;
+      printer.print(players.currentPlayer() + " was sent to the penalty box");
+      inPenaltyBox[players.currentPlayerId()] = true;
+      players.changePlayer();
       return true;
    }
 
    private boolean didPlayerWin() {
-      return !(purses[currentPlayer] == 6);
+      return !(purses[players.currentPlayerId()] == 6);
    }
 }
