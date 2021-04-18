@@ -35,14 +35,17 @@ class Questions {
 
     String categoryByPlace(final int place) {
         if (place == 0) return "Pop";
-        if (place == 4) return "Pop";
-        if (place == 8) return "Pop";
         if (place == 1) return "Science";
-        if (place == 5) return "Science";
-        if (place == 9) return "Science";
         if (place == 2) return "Sports";
+        if (place == 3) return "Rock";
+        if (place == 4) return "Pop";
+        if (place == 5) return "Science";
         if (place == 6) return "Sports";
+        if (place == 7) return "Rock";
+        if (place == 8) return "Pop";
+        if (place == 9) return "Science";
         if (place == 10) return "Sports";
-        return "Rock";
+        if (place == 11) return "Rock";
+        throw new IllegalArgumentException("Place with id: [" + place + "] not valid");
     }
 }
