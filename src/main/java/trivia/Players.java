@@ -8,7 +8,7 @@ class Players {
 
     private final Printer printer;
 
-    private int currentPlayer = 0;
+    private int currentPlayerId = 0;
 
     Players(final Printer printer) {
         this.printer = printer;
@@ -23,16 +23,16 @@ class Players {
     }
 
     Player currentPlayer() {
-        return players.get(currentPlayer);
+        return players.get(currentPlayerId);
     }
 
     int currentPlayerId() {
-        return currentPlayer;
+        return currentPlayerId;
     }
 
     void changePlayer() {
-        currentPlayer++;
-        if (currentPlayer == size()) currentPlayer = 0;
+        currentPlayerId++;
+        if (currentPlayerId == size()) currentPlayerId = 0;
     }
 
     void currentPlayerAnsweredCorrect() {
@@ -43,5 +43,11 @@ class Players {
 
     boolean didCurrentPlayerWin() {
         return currentPlayer().won();
+    }
+
+    int changePlaceOfCurrentPlayer(final int roll) {
+        final int place = currentPlayer().changePlace(roll);
+        printer.print(currentPlayer() + "'s new location is " + place);
+        return place;
     }
 }

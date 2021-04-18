@@ -4,8 +4,6 @@ public class GameBetter implements IGame {
 
    private final Printer printer;
 
-   private final int[] places = new int[6];
-
    private final boolean[] inPenaltyBox = new boolean[6];
 
    private final Players players;
@@ -52,12 +50,9 @@ public class GameBetter implements IGame {
    }
 
    private void rollAndAskQuestion(final int roll) {
-      places[players.currentPlayerId()] = placeOfCurrentPlayer() + roll;
-      if (placeOfCurrentPlayer() > 11)
-         places[players.currentPlayerId()] = placeOfCurrentPlayer() - 12;
-      printer.print(players.currentPlayer() + "'s new location is " + placeOfCurrentPlayer());
-      printer.print("The category is " + questions.categoryByPlace(placeOfCurrentPlayer()));
-      questions.askQuestion(placeOfCurrentPlayer());
+      final int place = players.changePlaceOfCurrentPlayer(roll);
+      printer.print("The category is " + questions.categoryByPlace(place));
+      questions.askQuestion(place);
    }
 
    @Override
@@ -89,10 +84,6 @@ public class GameBetter implements IGame {
 
    private int howManyPlayers() {
       return players.size();
-   }
-
-   private int placeOfCurrentPlayer() {
-      return places[players.currentPlayerId()];
    }
 
 

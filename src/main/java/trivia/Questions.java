@@ -3,6 +3,7 @@ package trivia;
 import java.util.LinkedList;
 
 class Questions {
+
     private final LinkedList<String> popQuestions = new LinkedList<>();
     private final LinkedList<String> scienceQuestions = new LinkedList<>();
     private final LinkedList<String> sportsQuestions = new LinkedList<>();

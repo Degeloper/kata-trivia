@@ -6,6 +6,8 @@ public class Player {
 
     private int purse = 0;
 
+    private int place = 0;
+
     Player(final String name) {
         this.name = name;
     }
@@ -21,5 +23,12 @@ public class Player {
 
     boolean won() {
         return !(purse == 6);
+    }
+
+    int changePlace(final int roll) {
+        place = place + roll;
+        if (place > 11)
+            place = place - 12;
+        return place;
     }
 }
