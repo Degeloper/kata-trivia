@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 class Players {
-    private final List<String> players = new ArrayList<>();
-
-    private final int[] purses = new int[6];
+    private final List<Player> players = new ArrayList<>();
 
     private final Printer printer;
 
@@ -17,14 +15,14 @@ class Players {
     }
 
     void add(final String playerName) {
-        players.add(playerName);
+        players.add(new Player(playerName));
     }
 
     int size() {
         return players.size();
     }
 
-    String currentPlayer() {
+    Player currentPlayer() {
         return players.get(currentPlayer);
     }
 
@@ -37,16 +35,13 @@ class Players {
         if (currentPlayer == size()) currentPlayer = 0;
     }
 
-    void incrementPurseOfCurrentPlayer() {
-        purses[currentPlayerId()]++;
-        printer.print(currentPlayer() + " now has " + purseOfCurrentPlayer() + " Gold Coins.");
+    void currentPlayerAnsweredCorrect() {
+        printer.print("Answer was correct!!!!");
+        final int purseOfCurrentPlayer = currentPlayer().incrementPurse();
+        printer.print(currentPlayer() + " now has " + purseOfCurrentPlayer + " Gold Coins.");
     }
 
-    private int purseOfCurrentPlayer() {
-        return purses[currentPlayerId()];
-    }
-
-    boolean didPlayerWin() {
-        return !(purseOfCurrentPlayer() == 6);
+    boolean didCurrentPlayerWin() {
+        return currentPlayer().won();
     }
 }

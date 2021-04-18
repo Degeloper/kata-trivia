@@ -9,6 +9,7 @@ public class GameBetter implements IGame {
    private final boolean[] inPenaltyBox = new boolean[6];
 
    private final Players players;
+
    private final Questions questions;
 
    private boolean isGettingOutOfPenaltyBox;
@@ -27,9 +28,6 @@ public class GameBetter implements IGame {
    @Override
    public boolean add(final String playerName) {
       players.add(playerName);
-      places[howManyPlayers()] = 0;
-      inPenaltyBox[howManyPlayers()] = false;
-
       printer.print(playerName + " was added");
       printer.print("They are player number " + players.size());
       return true;
@@ -74,9 +72,8 @@ public class GameBetter implements IGame {
    }
 
    private boolean correctAnswer() {
-      printer.print("Answer was correct!!!!");
-      players.incrementPurseOfCurrentPlayer();
-      final boolean winner = players.didPlayerWin();
+      players.currentPlayerAnsweredCorrect();
+      final boolean winner = players.didCurrentPlayerWin();
       players.changePlayer();
       return winner;
    }
