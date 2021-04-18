@@ -8,15 +8,15 @@ public class GameBetter implements IGame {
 
    private final Printer printer;
 
-   private List<String> players = new ArrayList<>();
-   private int[] places = new int[6];
-   private int[] purses = new int[6];
-   private boolean[] inPenaltyBox = new boolean[6];
+   private final List<String> players = new ArrayList<>();
+   private final int[] places = new int[6];
+   private final int[] purses = new int[6];
+   private final boolean[] inPenaltyBox = new boolean[6];
 
-   private LinkedList<String> popQuestions = new LinkedList<>();
-   private LinkedList<String> scienceQuestions = new LinkedList<>();
-   private LinkedList<String> sportsQuestions = new LinkedList<>();
-   private LinkedList<String> rockQuestions = new LinkedList<>();
+   private final LinkedList<String> popQuestions = new LinkedList<>();
+   private final LinkedList<String> scienceQuestions = new LinkedList<>();
+   private final LinkedList<String> sportsQuestions = new LinkedList<>();
+   private final LinkedList<String> rockQuestions = new LinkedList<>();
 
    private int currentPlayer = 0;
    private boolean isGettingOutOfPenaltyBox;
@@ -78,7 +78,6 @@ public class GameBetter implements IGame {
          isGettingOutOfPenaltyBox = false;
       }
       else {
-
          places[currentPlayer] = places[currentPlayer] + roll;
          if (places[currentPlayer] > 11) places[currentPlayer] = places[currentPlayer] - 12;
 
@@ -101,7 +100,6 @@ public class GameBetter implements IGame {
       if (currentCategory().equals("Rock"))
          printer.print(rockQuestions.removeFirst());
    }
-
 
    private String currentCategory() {
       if (places[currentPlayer] == 0) return "Pop";
@@ -137,7 +135,6 @@ public class GameBetter implements IGame {
          return true;
       }
       else {
-
          printer.print("Answer was correct!!!!");
          purses[currentPlayer]++;
          printer.print(players.get(currentPlayer)
@@ -163,7 +160,6 @@ public class GameBetter implements IGame {
       if (currentPlayer == players.size()) currentPlayer = 0;
       return true;
    }
-
 
    private boolean didPlayerWin() {
       return !(purses[currentPlayer] == 6);
