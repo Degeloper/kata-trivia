@@ -20,7 +20,7 @@ public class GameBetter implements IGame {
    }
 
    public boolean isPlayable() {
-      return (howManyPlayers() >= 2);
+      return (players.size() >= 2);
    }
 
    @Override
@@ -50,9 +50,8 @@ public class GameBetter implements IGame {
    }
 
    private void rollAndAskQuestion(final int roll) {
-      final int place = players.changePlaceOfCurrentPlayer(roll);
-      printer.print("The category is " + questions.categoryByPlace(place));
-      questions.askQuestion(place);
+      final int placeOfCurrentPlayer = players.changePlaceOfCurrentPlayer(roll);
+      questions.askQuestion(placeOfCurrentPlayer);
    }
 
    @Override
@@ -80,10 +79,6 @@ public class GameBetter implements IGame {
       inPenaltyBox[players.currentPlayerId()] = true;
       players.changePlayer();
       return true;
-   }
-
-   private int howManyPlayers() {
-      return players.size();
    }
 
 
